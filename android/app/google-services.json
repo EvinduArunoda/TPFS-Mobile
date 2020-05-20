@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "511891416337",
+    "firebase_url": "https://e-fining-sep.firebaseio.com",
+    "project_id": "e-fining-sep",
+    "storage_bucket": "e-fining-sep.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:511891416337:android:a5248782edad776dca58b0",
+        "android_client_info": {
+          "package_name": "com.tpfs.tpfs_policeman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "511891416337-bpb4c6uk1t95rdbblen6h96db6b1g122.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-rqcV1FXYujdSmg-bKjgIu0taL6YZqZc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "511891416337-bpb4c6uk1t95rdbblen6h96db6b1g122.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
