@@ -13,7 +13,7 @@ class CreateTicketPage3 extends StatefulWidget {
   Fine fine;
   List<Fine> tempFines;
 
-  CreateTicketPage3({@required this.fine, @required this.tempFines});
+  CreateTicketPage3({@required this.fine, @required this.tempFines,Key key}) : super(key:key);
   @override
  _CreateTicketPage3State createState() => _CreateTicketPage3State();
 }
@@ -23,11 +23,13 @@ class _CreateTicketPage3State extends State<CreateTicketPage3> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: Key('tilefine'),
     padding: EdgeInsets.only(top:4.0),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         CheckboxListTile(
+          key: Key('checkboxtilefine'),
           title: Text(widget.fine.fineDescription),
           controlAffinity: ListTileControlAffinity.leading,
           value: checkboxvalue,
@@ -44,7 +46,6 @@ class _CreateTicketPage3State extends State<CreateTicketPage3> {
             letterSpacing: 2.0,
             fontWeight: FontWeight.bold,
             fontSize: 18.0,
-
             )),
         ),
       ] 

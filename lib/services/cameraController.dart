@@ -8,21 +8,10 @@ import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:tpfs_policeman/models/Ticket.dart';
 import 'package:tpfs_policeman/models/driver.dart';
+import 'package:tpfs_policeman/models/procedure.dart';
 import 'package:tpfs_policeman/models/vehicle.dart';
 import 'package:tpfs_policeman/views/CA%20module/takePicture.dart';
 import 'package:tpfs_policeman/views/tickets/addImageToTicket.dart';
-
-
-  // runApp(
-  //   MaterialApp(
-  //     theme: ThemeData.dark(),
-  //     home: TakePictureScreen(
-  //       // Pass the appropriate camera to the TakePictureScreen widget.
-  //       camera: firstCamera,
-  //     ),
-  //   ),
-  // );
-// }
 
 // A screen that allows users to take a picture using a given camera.
 class TakePictureScreen extends StatefulWidget {
@@ -31,10 +20,11 @@ class TakePictureScreen extends StatefulWidget {
   String reason;
   Vehicle vehicle;
   Driver driver;
+  ProcedurePolice procedure;
 
 
   TakePictureScreen({
-    Key key,
+    Key key,this.procedure,
     @required this.camera,this.ticket,this.reason,this.vehicle,this.driver
   }) : super(key: key);
 
@@ -93,6 +83,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        key: Key('PictureTakeButton'),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Icon(
@@ -126,7 +117,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => TakePicture(imagePath: path),
+                builder: (context) => TakePicture(imagePath: path,procedure: widget.procedure,key: Key('TakePicture'),),
               ),
             );
             }
@@ -134,7 +125,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => TakePictureTicket(imagePath: path,ticket:widget.ticket,isVehicle: true,vehicle: widget.vehicle),
+                builder: (context) => TakePictureTicket(imagePath: path,ticket:widget.ticket,isVehicle: true,vehicle: widget.vehicle,key: Key('TicketVehicle'),camera: widget.camera,),
               ),
             );
             }
@@ -142,7 +133,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => TakePictureTicket(imagePath: path,ticket:widget.ticket,isVehicle: false,driver: widget.driver),
+                builder: (context) => TakePictureTicket(imagePath: path,ticket:widget.ticket,isVehicle: false,driver: widget.driver,key: Key('TicketDriver'),camera: widget.camera,),
               ),
             );
             }
@@ -156,19 +147,3 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   }
 }
 
-// A widget that displays the picture taken by the user.
-// class DisplayPictureScreen extends StatelessWidget {
-//   final  imagePath;
-
-//   const DisplayPictureScreen({Key key, this.imagePath}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text('Display the Picture')),
-//       // The image is stored as a file on the device. Use the `Image.file`
-//       // constructor with the given path to display the image.
-//       body: RotationTransition(turns:AlwaysStoppedAnimation(270 / 360),child: Image.file(File(imagePath))),
-//     );
-//   }
-// }

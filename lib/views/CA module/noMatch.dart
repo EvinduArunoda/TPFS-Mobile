@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tpfs_policeman/services/createTicket.dart';
 
 class NoMatch extends StatefulWidget {
   String imagePath;
 
-  NoMatch({this.imagePath});
+  NoMatch({this.imagePath,Key key}) : super(key:key);
   @override
   _NoMatchState createState() => _NoMatchState();
 }
@@ -16,7 +17,8 @@ class _NoMatchState extends State<NoMatch> {
     return Scaffold(
     backgroundColor: Colors.white,
     appBar: AppBar(
-      title: Text('Assessment Results'),
+      key: Key('NoMatchAppBar'),
+      title: Text('Assessment Results',key:Key('NoMatchAppText'),style: GoogleFonts.orbitron(),),
       centerTitle: true,
       backgroundColor: Colors.cyan[900],
       elevation: 0.0,
@@ -77,7 +79,7 @@ class _NoMatchState extends State<NoMatch> {
             ),
           ),
           SizedBox(height: 15.0),
-          Container(height: 200,child: Image.file(File(widget.imagePath))),
+          Container(key:Key('NoMatchImage'),height: 200,child: Image.file(File(widget.imagePath))),
           Divider(
             color: Colors.grey[800],
             height: 40.0,

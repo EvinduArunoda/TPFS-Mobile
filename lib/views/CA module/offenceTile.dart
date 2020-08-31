@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tpfs_policeman/models/offences.dart';
 
 class OffenceTile extends StatefulWidget {
@@ -34,7 +35,7 @@ class _OffenceTileState extends State<OffenceTile> {
                       Row(
                         children: <Widget>[
                           Text(
-                            'Date : ',
+                            'Date : '.toUpperCase(),
                             style: TextStyle(
                               color: Colors.black,
                               letterSpacing: 2.0,
@@ -44,12 +45,13 @@ class _OffenceTileState extends State<OffenceTile> {
                           SizedBox(width: 10.0),
                           Text(
                             widget.offence.date,
-                            style: TextStyle(
+                            style: GoogleFonts.specialElite(
+                              textStyle: TextStyle(
                               color: Colors.cyan[900],
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,
                               letterSpacing: 2.0,
-                            ),
+                            )),
                           ),
                         ],
                       ),
@@ -57,7 +59,7 @@ class _OffenceTileState extends State<OffenceTile> {
                       Row(
                         children: <Widget>[
                           Text(
-                            'Location : ',
+                            'Location : '.toUpperCase(),
                             style: TextStyle(
                               color: Colors.black,
                               letterSpacing: 2.0,
@@ -70,12 +72,13 @@ class _OffenceTileState extends State<OffenceTile> {
                               width: MediaQuery.of(context).size.width*0.4,
                               child: Text(
                                 widget.offence.place,
-                                style: TextStyle(
+                                style: GoogleFonts.specialElite(
+                                  textStyle: TextStyle(
                                   color: Colors.red[900],
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
                                   letterSpacing: 2.0,
-                                ),
+                                )),
                               ),
                             ),
                           ),
@@ -104,12 +107,13 @@ class _OffenceTileState extends State<OffenceTile> {
                               child:Text(
                                 widget.offence.offence,
                                 textAlign: TextAlign.left,
-                                style: TextStyle(
+                                style: GoogleFonts.specialElite(
+                                textStyle: TextStyle(
                                   color: Colors.cyan[900],
                                   letterSpacing: 2.0,
                                    fontSize: 17.0,
                                   fontWeight: FontWeight.bold
-                                ),
+                                )),
                               ),
                             ),
                           ),

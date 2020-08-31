@@ -1,23 +1,28 @@
 import 'package:camera/camera.dart';
 import 'package:flappy_search_bar/search_bar_style.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tpfs_policeman/models/Ticket.dart';
 import 'package:tpfs_policeman/models/driver.dart';
+import 'package:tpfs_policeman/models/procedure.dart';
 import 'package:tpfs_policeman/models/user.dart';
+import 'package:tpfs_policeman/services/createTicket.dart';
 import 'package:tpfs_policeman/services/db_driver.dart';
 // import 'package:tpfs_policeman/shared/constant.dart';
 // import 'package:tpfs_policeman/shared/loading.dart';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:tpfs_policeman/services/db_policeman.dart';
 import 'package:tpfs_policeman/services/firebaseStorage.dart';
+import 'package:tpfs_policeman/shared/loading.dart';
 import 'package:tpfs_policeman/views/profiles/driverprofile.dart';
 
 class SearchDriver extends StatefulWidget {
   Ticket ticket ; 
   CameraDescription camera;
+  ProcedurePolice procedure;
 
-  SearchDriver({this.ticket, this.camera});
+  SearchDriver({this.ticket, this.camera,this.procedure,Key key}) : super(key : key);
   
 
   @override
@@ -27,45 +32,52 @@ class SearchDriver extends StatefulWidget {
 class _SearchDriverState extends State<SearchDriver> {
   // final SearchBarController<Vehicle> _searchBarController = SearchBarController();
   List<Driver> result;
+  bool loading = false;
 
   Future<List<Driver>> _getDriver(String text) async {
 
-    text = text.toLowerCase().trim();
-    await Future.delayed(Duration(seconds: text.length == 7 ? 10 : 1));
+    text = text.toUpperCase().trim();
+    await Future.delayed(Duration(seconds: text.length == 8 ? 10 : 1));
     result = await DriverCollection().searchLicensePlate(text);
+    print(result);
     return result;
   }
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-    return Scaffold(
+    return loading ? LoadingAnother() : Scaffold(
     backgroundColor: Colors.white,
     appBar: AppBar(
+      leading: BackButton(key:Key('goBackVehicle')),
       title : Text(
         'License Number',
-        style: TextStyle(
+        style:GoogleFonts.orbitron(
+          textStyle: TextStyle(
           fontWeight: FontWeight.w800,
-          fontFamily: 'Roboto',
+          // fontFamily: 'Roboto',
           letterSpacing: 0.5,
           fontSize: 25,
-        ),),
+        )),),
       backgroundColor: Colors.cyan[900],
       elevation: 10.0,
     ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(8.0, 30.0, 8.0, 0),
         child: SearchBar<Driver>(
+          // key: Key('SearchBarDriver'),
+          icon: Icon(Icons.search,key: Key('SearchBarDriver')),
           searchBarPadding: EdgeInsets.symmetric(horizontal: 10),
           headerPadding: EdgeInsets.symmetric(horizontal: 10),
           listPadding: EdgeInsets.symmetric(horizontal: 10),
           onSearch: _getDriver,
-          textStyle: TextStyle(
+          textStyle:GoogleFonts.fjallaOne(
+            textStyle: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 18.0,
-            letterSpacing: 2.0,
-          ),
+            letterSpacing: 2.5,
+          )),
           searchBarStyle: SearchBarStyle(
             backgroundColor: Colors.blueGrey,
             padding:EdgeInsets.all(10.0),
@@ -75,28 +87,30 @@ class _SearchDriverState extends State<SearchDriver> {
           cancellationWidget: Container(
             padding: EdgeInsets.all(7.0),
             child: Text(
-              "Cancel"
+              "Cancel",key:Key('CancelWidget'),style:GoogleFonts.orbitron(textStyle: TextStyle(fontWeight: FontWeight.bold,letterSpacing: 0.4))
               ),
           ),
           emptyWidget: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(20.0),
             child: Text(
-              "No results Found",
+              "No Results Found".toUpperCase(),
+              key: Key('NoResultsText'),
               textAlign: TextAlign.right,
-               style: TextStyle(color: Colors.red[900] , fontSize: 18.0,fontWeight: FontWeight.bold),
+               style:GoogleFonts.orbitron(
+                textStyle: TextStyle(color: Colors.red[900] , fontSize: 22.0,fontWeight: FontWeight.bold)),
               ),
           ),
           header: Row(
             children: <Widget>[
             ],
           ),
-          onCancelled: () {
-          },
+          onCancelled: () {},
           crossAxisCount: 1,
           onItemFound:(Driver vehicle, int index) {
             return Padding(
               padding: const EdgeInsets.only(top:20.0),
               child: Container(
+                key: Key('SearchResultTile'),
                 decoration: new BoxDecoration(
                 boxShadow:[ new BoxShadow(
                 color: Colors.white30,
@@ -128,21 +142,23 @@ class _SearchDriverState extends State<SearchDriver> {
                             children: <Widget>[
                               Text(
                                 'License Number : ',
-                                style: TextStyle(
+                                style:GoogleFonts.chelseaMarket(
+                                textStyle: TextStyle(
                                   color: Colors.black,
                                   letterSpacing: 2.0,
                                   fontWeight: FontWeight.bold
-                                ),
+                                )),
                               ),
                               SizedBox(width: 10.0),
                               Text(
                                 result[0].licenseNumber,
-                                style: TextStyle(
+                                style:GoogleFonts.patrickHand(
+                                textStyle: TextStyle(
                                   color: Colors.cyan[900],
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16.0,
+                                  fontSize: 18.0,
                                   letterSpacing: 2.0,
-                                ),
+                                )),
                               ),
                             ],
                           ),
@@ -158,21 +174,23 @@ class _SearchDriverState extends State<SearchDriver> {
                           children: <Widget>[
                             Text(
                               'Name : ',
-                              style: TextStyle(
+                              style:GoogleFonts.chelseaMarket(
+                                textStyle: TextStyle(
                                 color: Colors.black,
                                 letterSpacing: 2.0,
                                 fontWeight: FontWeight.bold
-                              ),
+                              )),
                             ),
                             SizedBox(width: 10.0),
                             Text(
                               result[0].name,
-                              style: TextStyle(
+                              style:GoogleFonts.patrickHand(
+                              textStyle: TextStyle(
                                 color: Colors.cyan[900],
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16.0,
+                                fontSize: 18.0,
                                 letterSpacing: 2.0,
-                              ),
+                              )),
                             ),
                           ],
                         ),
@@ -181,21 +199,23 @@ class _SearchDriverState extends State<SearchDriver> {
                           children: <Widget>[
                             Text(
                               'NIC Number : ',
-                              style: TextStyle(
+                              style:GoogleFonts.chelseaMarket(
+                              textStyle: TextStyle(
                                 color: Colors.black,
                                 letterSpacing: 2.0,
                                 fontWeight: FontWeight.bold
-                              ),
+                              )),
                             ),
                             SizedBox(width: 10.0),
                             Text(
                               '${result[0].nicnumber}',
-                              style: TextStyle(
+                              style:GoogleFonts.patrickHand(
+                              textStyle: TextStyle(
                                 color: Colors.cyan[900],
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16.0,
+                                fontSize: 18.0,
                                 letterSpacing: 2.0,
-                              ),
+                              )),
                             ),
                           ],
                         ),
@@ -204,12 +224,15 @@ class _SearchDriverState extends State<SearchDriver> {
                 ),
                       ),
                       onTap: () async{
-                      await DatabaseServicePolicemen(uid: user.uid).updateNumOfDriverProfiles();
+                        setState(() => loading = true);
+//                      await DatabaseServicePolicemen(uid: user.uid).updateNumOfDriverProfiles();
+                        widget.procedure.driverProfileSearched = result[0].licenseNumber;
                        String driverImage = await Storage().getDriverImage(result[0].licenseNumber);
-                       Navigator.push(context, MaterialPageRoute(builder: (context) => NinjaCardD(ticket: widget.ticket,driver: result[0],driverImage: driverImage
-                                  ,camera: widget.camera),
+                       await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => NinjaCardD(ticket: widget.ticket,driver: result[0],driverImage: driverImage,
+                                  key: Key('DriverProfilePage'),camera: widget.camera,driverCollection: DriverCollection(),creatingTicket: CreateTicketNew()),
                         ),
                       );
+                        setState(() => loading = false);
                       },
                     ),
                   ),

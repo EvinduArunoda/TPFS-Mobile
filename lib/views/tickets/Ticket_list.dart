@@ -15,13 +15,11 @@ class _TicketlistState extends State<Ticketlist> {
   @override
   Widget build(BuildContext context) {
 
-    // final brews = Provider.of<List<Brew>>(context);
-
     return ListView.builder(
+      key: Key('TicketListBuilder'),
       itemCount: widget.tickets.length,
       itemBuilder: (context, index){
-         return TicketTile(ticket: widget.tickets[index]);
-        // return BrewTile(brew: brews[index]);
+         return TicketTile(ticket: widget.tickets[index],key: Key('tile$index'),);
       },
     );
   }

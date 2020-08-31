@@ -12,15 +12,15 @@ User _userFromFirebaseUser(FirebaseUser user){
   return user != null ? User(uid : user.uid) : null;
 }
 
-  Stream<User> get user {
-    return _auth.onAuthStateChanged
-        .map(_userFromFirebaseUser);
-  }
+Stream<User> get user {
+  return _auth.onAuthStateChanged
+      .map(_userFromFirebaseUser);
+}
 
   // sign in with email and password
   Future signInWithEmailAndPassword(String email, String password) async {
     try{
-      AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      AuthResult result = await _auth.signInWithEmailAndPassword(email: email.trim(), password: password.trim());
       FirebaseUser user = result.user;
         return _userFromFirebaseUser(user);
     }catch(e){
@@ -29,15 +29,15 @@ User _userFromFirebaseUser(FirebaseUser user){
     }
   }
 
-  Future<bool> checkIfCorrectType(User user) async{
-     DocumentSnapshot userPresent = await Firestore.instance.collection('PoliceMen').document(user.uid).get();
-      if(userPresent.data != null){
-        return true;
-      }
-      else{
-        return false;
-      }
-  }
+  // Future<bool> checkIfCorrectType(User user) async{
+  //    DocumentSnapshot userPresent = await Firestore.instance.collection('PoliceMen').document(user.uid).get();
+  //     if(userPresent.data != null){
+  //       return true;
+  //     }
+  //     else{
+  //       return false;
+  //     }
+  // }
 
   Future<bool> resetPassword(String email) async {
     try{

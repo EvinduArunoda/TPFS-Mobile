@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tpfs_policeman/models/Ticket.dart';
 import 'package:tpfs_policeman/models/fine.dart';
+import 'package:tpfs_policeman/models/procedure.dart';
 import 'package:tpfs_policeman/shared/loading.dart';
 import 'package:tpfs_policeman/views/tickets/createTicket.dart';
 import 'package:tpfs_policeman/views/tickets/createTicket2.dart';
@@ -13,8 +14,9 @@ class FineList extends StatefulWidget {
   Ticket ticket;
   List<Fine> fines;
   List<Fine> tempFines = List<Fine>();
+  ProcedurePolice procedure;
 
-  FineList({Key key,@required this.ticket, @required this.fines}) : super(key: key);
+  FineList({Key key,@required this.ticket, @required this.fines,this.procedure}) : super(key: key);
   @override
   _FineListState createState() => _FineListState();
 }
@@ -65,9 +67,11 @@ class _FineListState extends State<FineList> {
 
   @override
   Widget build(BuildContext context) {
-    return loading ? Loading() : Scaffold(
+    return loading ? LoadingAnother() : Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        key: Key('TicketPagethreeAppbar'),
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.cyan[900],
         elevation: 0.0,
         title: Text('Select Offence Commited'),
@@ -77,10 +81,11 @@ class _FineListState extends State<FineList> {
           Padding(
             padding: const EdgeInsets.all(9.0),
             child: ListView.builder(
+              key: Key('finesbuilder'),
               itemCount: widget.fines.length,
               itemBuilder: (context, index){
                 // print(tempFines);
-                return CreateTicketPage3(fine: widget.fines[index],tempFines:widget.tempFines);
+                return CreateTicketPage3(fine: widget.fines[index],tempFines:widget.tempFines,key: Key('Pagethreeticket'),);
               },
             ),
           ),
@@ -88,13 +93,15 @@ class _FineListState extends State<FineList> {
             Padding(
               padding: const EdgeInsets.all(14.0),
               child: RaisedButton(
+                key: Key('Pagethreecancelbutton'),
                 color: Colors.cyan[900],
                 child: Text(
-                  'Cancel',
+                  'Cancel Ticket',
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () {
-                  widget.ticket.vehicle = null;
+                  widget.ticket.status = 'cancelled';
+                  widget.procedure.ticket = 'cancelled mid procedure';
                   Navigator.popUntil(context, ModalRoute.withName("Process"));
                 }
           ),
@@ -102,6 +109,7 @@ class _FineListState extends State<FineList> {
             Padding(
               padding: const EdgeInsets.all(14.0),
               child: RaisedButton(
+                  key: Key('Pagethreecontinuebutton'),
                   color: Colors.cyan[900],
                   child: Text(
                     'Continue',
@@ -132,12 +140,12 @@ class _FineListState extends State<FineList> {
                         'fineAmounts' :fineAmounts,
                       },
                     );
-                    print((amountFine.data)/1.0);
+                    print(((amountFine.data)/1.0));
                     widget.ticket.fineAmount = (amountFine.data)/1.0;
-                    print(widget.tempFines.length); 
+                    print(widget.tempFines.length);
+//                    Navigator.popUntil(context, ModalRoute.withName("CreateTicket"));
+                    await Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => FineTicket(ticket: widget.ticket,callable: callable,procedure: widget.procedure)));
                     setState(()=>loading =false);
-                    Navigator.popUntil(context, ModalRoute.withName("CreateTicket"));
-                    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => FineTicket(ticket: widget.ticket,callable: callable)));
                       //print(resp.data);
                     //  print(widget.ticket.offences);
                    } }

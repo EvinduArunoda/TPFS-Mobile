@@ -139,4 +139,9 @@ class CreateTicketNew {
     }
     return filteredTickets;
   }
+
+  DocumentReference referenceFromID(String userID){
+    return Firestore.instance.collection('Ticket').document(userID);
+  }
+
  }

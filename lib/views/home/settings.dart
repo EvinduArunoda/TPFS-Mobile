@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tpfs_policeman/models/user.dart';
 
@@ -27,12 +28,13 @@ class Settings extends StatelessWidget {
                 child: Text(
                       'Procedure Logs for the year'.toUpperCase(),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: GoogleFonts.orbitron(
+                        textStyle:TextStyle(
                         color: Colors.cyan[900],
                         letterSpacing: 2.0,
-                        fontSize: 35.0,
+                        fontSize: 33.0,
                         fontWeight: FontWeight.bold
-                      ),
+                      )),
                     ),
               ),
               Divider(
@@ -43,21 +45,24 @@ class Settings extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Number Of Procedures Started : '.toUpperCase(),
-                    style: TextStyle(
+                    style: GoogleFonts.electrolize(
+                      textStyle: TextStyle(
                       color: Colors.black,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2.0,
-                      fontSize: 20.0,
-                    ),
+                      fontSize: 25.0,
+                    )),
                   ),
                   SizedBox(width: 10.0),
                   Text(
                     '${userLog.numOfProcedures}',
-                    style: TextStyle(
+                    style:GoogleFonts.fjallaOne(
+                        textStyle: TextStyle(
                       color: Colors.black,
                       letterSpacing: 2.0,
-                      fontSize: 24.0,
+                      fontSize: 28.0,
                       fontWeight: FontWeight.bold
-                    ),
+                    )),
                   ),
                 ],
               ),
@@ -66,21 +71,24 @@ class Settings extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Number Of tickets created : '.toUpperCase(),
-                    style: TextStyle(
+                     style: GoogleFonts.electrolize(
+                      textStyle: TextStyle(
                       color: Colors.black,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2.0,
-                      fontSize: 20.0,
-                    ),
+                      fontSize: 25.0,
+                    )),
                   ),
                   SizedBox(width: 10.0),
                   Text(
                     '${userLog.numbOfTicSuccess}',
-                    style: TextStyle(
+                    style:GoogleFonts.fjallaOne(
+                        textStyle: TextStyle(
                       color: Colors.black,
                       letterSpacing: 2.0,
-                      fontSize: 24.0,
+                      fontSize: 28.0,
                       fontWeight: FontWeight.bold
-                    ),
+                    )),
                   ),
                 ],
               ),
@@ -89,21 +97,24 @@ class Settings extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Number Of tickets reported : '.toUpperCase(),
-                    style: TextStyle(
+                    style: GoogleFonts.electrolize(
+                      textStyle: TextStyle(
                       color: Colors.black,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2.0,
-                      fontSize: 20.0,
-                    ),
+                      fontSize: 25.0,
+                    )),
                   ),
                   SizedBox(width: 10.0),
                   Text(
                     '${userLog.numbOfTicRep}',
-                    style: TextStyle(
+                    style:GoogleFonts.fjallaOne(
+                        textStyle: TextStyle(
                       color: Colors.black,
                       letterSpacing: 2.0,
-                      fontSize: 24.0,
+                      fontSize: 28.0,
                       fontWeight: FontWeight.bold
-                    ),
+                    )),
                   ),
                 ],
               ),
@@ -112,21 +123,24 @@ class Settings extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Number Of vehicle profiles viewed: '.toUpperCase(),
-                    style: TextStyle(
+                    style: GoogleFonts.electrolize(
+                      textStyle: TextStyle(
                       color: Colors.black,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2.0,
-                      fontSize: 20.0,
-                    ),
+                      fontSize: 25.0,
+                    )),
                   ),
                   SizedBox(width: 10.0),
                   Text(
                     '${userLog.numofVehProfViewed}',
-                    style: TextStyle(
+                    style: GoogleFonts.fjallaOne(
+                        textStyle:TextStyle(
                       color: Colors.black,
                       letterSpacing: 2.0,
-                      fontSize: 24.0,
+                      fontSize: 28.0,
                       fontWeight: FontWeight.bold
-                    ),
+                    )),
                   ),
                 ],
               ),
@@ -135,21 +149,24 @@ class Settings extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     'Number Of driver profiles viewed : '.toUpperCase(),
-                    style: TextStyle(
+                    style: GoogleFonts.electrolize(
+                      textStyle: TextStyle(
                       color: Colors.black,
+                      fontWeight: FontWeight.w700,
                       letterSpacing: 2.0,
-                      fontSize: 20.0,
-                    ),
+                      fontSize: 25.0,
+                    )),
                   ),
                   SizedBox(width: 10.0),
                   Text(
                     '${userLog.numofDriProfViewed}',
-                    style: TextStyle(
+                    style: GoogleFonts.fjallaOne(
+                        textStyle:TextStyle(
                       color: Colors.black,
                       letterSpacing: 2.0,
-                      fontSize: 24.0,
+                      fontSize: 28.0,
                       fontWeight: FontWeight.bold
-                    ),
+                    )),
                   ),
                 ],
               ),

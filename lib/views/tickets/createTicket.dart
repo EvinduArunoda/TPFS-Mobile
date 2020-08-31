@@ -2,26 +2,46 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:string_validator/string_validator.dart';
 import 'package:tpfs_policeman/models/Ticket.dart';
-import 'package:tpfs_policeman/services/auth.dart';
-import 'package:tpfs_policeman/services/createTicket.dart';
+import 'package:tpfs_policeman/models/procedure.dart';
+//import 'package:tpfs_policeman/services/auth.dart';
+//import 'package:tpfs_policeman/services/createTicket.dart';
 import 'package:tpfs_policeman/shared/constant.dart';
 import 'package:tpfs_policeman/shared/loading.dart';
 import 'package:tpfs_policeman/views/tickets/createTicket2.dart';
+
+class LicensePlateFieldValidator {
+  static String validate(String val) {
+    return val.isEmpty? 'Enter valid license plate number' : null;
+  }
+}
+
+class PhoneNumberValidator {
+  static String validate(String val) {
+    return val.isEmpty || val.length != 10 || val.substring(0,2) != '07'? 'Enter a valid phone number' : null;
+  }
+}
+
+class LicenseNumberValidator {
+  static String validate(String val) {
+    return val.isEmpty|| val.length !=8 || val[0].toUpperCase() != 'B' || !isNumeric(val.substring(1))  ? 'Enter valid driving license number' : null;
+  }
+}
 
 class CreateTicket extends StatefulWidget {
   Ticket ticket;
   Map<String,String> dateAndTime;
   String location;
   CameraDescription camera;
+  ProcedurePolice procedure;
 
-  CreateTicket({@required this.dateAndTime, @required this.ticket, @required this.location,this.camera});
+  CreateTicket({@required this.dateAndTime, @required this.ticket,this.location,this.camera,this.procedure,Key key}):super(key:key);
   @override
  _CreateTicketState createState() => _CreateTicketState();
 }
 
 class _CreateTicketState extends State<CreateTicket> {
 
-  final AuthService _auth = AuthService();
+  // final AuthService _auth = AuthService();
   final _formkey = GlobalKey<FormState>();
   bool loading = false;
   String time = '';
@@ -49,6 +69,8 @@ class _CreateTicketState extends State<CreateTicket> {
     return loading ? Loading() : Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        key: Key('AppbarTicket'),
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.cyan[900],
         elevation: 0.0,
         title: Text('Create Ticket'),
@@ -194,10 +216,11 @@ class _CreateTicketState extends State<CreateTicket> {
                     fontSize: 18.0
                   ),
                 ) :TextFormField(
+                  key: Key('licensenumfield'),
                     maxLines: 1,
                     autofocus: false,
                     decoration: textInputDecoration.copyWith(),
-                    validator: (val) => val.isEmpty|| val.length !=8 || val[0].toUpperCase() != 'B' || !isNumeric(val.substring(1))  ? 'Enter valid driving license number' : null,
+                    validator: LicenseNumberValidator.validate,
                     onChanged: (val){
                       setState(() => licenseNum = val.toUpperCase().trim());
                     },
@@ -243,9 +266,10 @@ class _CreateTicketState extends State<CreateTicket> {
                     fontSize: 18.0
                   ),
                 ): TextFormField(
+                  key: Key('licensefield'),
                     autofocus: false,
                     decoration: textInputDecoration.copyWith(),
-                    validator: (val) => val.isEmpty? 'Enter valid license plate number' : null,
+                    validator: LicensePlateFieldValidator.validate,
                     onChanged: (val){
                       setState(() => licensePlate = val.toUpperCase().trim());
                     },
@@ -276,6 +300,7 @@ class _CreateTicketState extends State<CreateTicket> {
                       children: <Widget>[
                         Text(
                         '${widget.ticket.phoneNumber}',
+                        key: Key('phoneText'),
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -285,6 +310,7 @@ class _CreateTicketState extends State<CreateTicket> {
                       ),
                         SizedBox(width:35.0),
                         RaisedButton(
+                          key: Key('ChangeButton'),
                           color: Colors.cyan[900],
                           child: Text(
                             'Change',
@@ -298,9 +324,10 @@ class _CreateTicketState extends State<CreateTicket> {
                       ],
                     ),
                   ): TextFormField(
+                    key: Key('phoneFieldVal'),
                     autofocus: false,
                     decoration: textInputDecoration.copyWith(),
-                    validator: (val) => val.isEmpty || val.length != 10 || val.substring(0,2) != '07'? 'Enter a valid phone number' : null,
+                    validator: PhoneNumberValidator.validate,
                     onChanged: (val){
                       setState(() => phoneNumber = val.trim());
                     },
@@ -311,16 +338,19 @@ class _CreateTicketState extends State<CreateTicket> {
                   alignment: MainAxisAlignment.end,
                   children: <Widget>[
                     RaisedButton(
+                      key: Key('CancelButton'),
                   color: Colors.cyan[900],
                   child: Text(
                     'Cancel',
                     style: TextStyle(color: Colors.white),
                   ),
                   onPressed: () async{
+                    widget.procedure.ticket = 'cancelled mid procedure';
                     Navigator.popUntil(context, ModalRoute.withName("Process"));
                   }
                 ),
                     RaisedButton(
+                      key: Key('ContinueTicketButton'),
                       color: Colors.cyan[900],
                       child: Text(
                         'Continue',
@@ -328,10 +358,6 @@ class _CreateTicketState extends State<CreateTicket> {
                       ),
                       onPressed: () async{
                         if(_formkey.currentState.validate()){
-                          // if(result == null){
-                          //   setState(() => error = 'Could not sign in with those credentials');
-                          //   setState(() => loading = false);
-                          // }
                           if(widget.ticket.licenseNumber== null){
                             widget.ticket.licenseNumber = licenseNum;
                           }
@@ -342,6 +368,7 @@ class _CreateTicketState extends State<CreateTicket> {
                           }
                           if(widget.ticket.phoneNumber == null){
                             widget.ticket.phoneNumber = int.parse(phoneNumber);
+
                           }
                           widget.ticket.date = widget.dateAndTime['date'];
                           widget.ticket.time = widget.dateAndTime['time'];
@@ -349,8 +376,10 @@ class _CreateTicketState extends State<CreateTicket> {
                           
                           // print(widget.ticket.phoneNumber);
                           widget.ticket.vehicle = 'Car';
-                         // widget.ticket.prevOffences = await CreateTicketNew().getPreviousTickets(widget.ticket.licenseNumber, widget.ticket.licensePlate);
-                          Navigator.push(context,MaterialPageRoute(settings: RouteSettings(name: "CreateTicketPage2"),builder: (context) => CreateTicketPage2(ticket: widget.ticket,camera: widget.camera)));
+                          print(widget.ticket.policemenstationID);
+                          print(widget.ticket.phoneNumber);
+                          Navigator.push(context,MaterialPageRoute(settings: RouteSettings(name: "CreateTicketPage2"),builder: (context) => CreateTicketPage2(ticket: widget.ticket,camera: widget.camera,
+                                                                                                      procedure: widget.procedure,key: Key('CreateTicketPageTwo'),)));
                         }
                       }
                     ),

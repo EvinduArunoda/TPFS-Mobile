@@ -14,6 +14,7 @@ class _OffenceListState extends State<OffenceList> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      key: Key('OffenceListBuilder'),
       itemCount: widget.offencesOfCriminal.length,
       itemBuilder: (context, index){
          return OffenceTile(offence: widget.offencesOfCriminal[index]);

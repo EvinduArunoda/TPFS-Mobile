@@ -14,12 +14,12 @@ class UserData {
   final String lastName;
   final String address;
   final String employeeID;
-  final num phoneNumber;
+  final String phoneNumber;
   final String mailID;
   final String nicnumber;
-  DocumentReference userLog;
+  final String stationID;
 
-  UserData({ this.userid,this.firstName, this.lastName, this.address, this.employeeID,this.phoneNumber,this.mailID,this.userLog,this.nicnumber});
+  UserData({ this.userid,this.firstName, this.lastName, this.address, this.employeeID,this.phoneNumber,this.mailID,this.nicnumber,this.stationID});
 }
 
 class UserLog {

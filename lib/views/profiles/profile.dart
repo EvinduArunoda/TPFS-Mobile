@@ -1,15 +1,38 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tpfs_policeman/models/user.dart';
 import 'package:tpfs_policeman/services/auth.dart';
 import 'package:tpfs_policeman/services/db_policeman.dart';
 import 'package:tpfs_policeman/shared/constant.dart';
+import 'package:tpfs_policeman/shared/loading.dart';
+import 'package:tpfs_policeman/views/authenticate/sign_in.dart';
+
+class AddressFieldValidator {
+  static String validate(String val) {
+    return val.isEmpty ? 'Enter address' : null;
+  }
+}
+
+class PhoneNumberFieldValidator {
+  static String validate(String val) {
+    return val.isEmpty || val.length != 10? 'Enter valid phone number' : null;
+  }
+}
+
+class EmailAddressFieldValidator {
+  static String validate(String val) {
+    return val.isEmpty ? 'Enter email address' : null;
+  }
+}
 
 class NinjaCard extends StatefulWidget {
    String userImage;
+   DatabaseServicePolicemen databaseServicePolicemen;
+   AuthService authservice;
 
-   NinjaCard({@required this.userImage});
+   NinjaCard({@required this.userImage,@required this.databaseServicePolicemen,Key key,@required this.authservice}) : super(key:key);
   @override
   _NinjaCardState createState() => _NinjaCardState();
 }
@@ -24,10 +47,12 @@ class _NinjaCardState extends State<NinjaCard> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserData>(context)??UserData(employeeID: '',firstName: '',lastName: '',address: '',phoneNumber: 0,mailID: '');
+    final user = Provider.of<UserData>(context)??UserData(employeeID: '',firstName: '',lastName: '',address: '',phoneNumber: '',mailID: '');
+    bool loading = false;
 
-    return SingleChildScrollView(
+    return loading ? LoadingAnother() : SingleChildScrollView(
       child: changePassword? Container(
+        key: Key('HasChangePassword'),
         child:Column(
           children: <Widget>[
             SizedBox(height: 20,),
@@ -42,6 +67,7 @@ class _NinjaCardState extends State<NinjaCard> {
               ),
             ),
             OutlineButton(
+              key: Key('ReturnProfileButton'),
               child: Text(
                 'Return to Profile',
                 style: TextStyle(color: Colors.cyan[900] , fontSize: 17.0),
@@ -53,12 +79,14 @@ class _NinjaCardState extends State<NinjaCard> {
           ],
         ),
       ):Container(
+        key: Key('NotChangePassword'),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Center(
+                key: Key('PolicemenImage'),
                 child: CircleAvatar(
                   radius: 60.0,
                   backgroundImage: NetworkImage(widget.userImage),
@@ -72,79 +100,85 @@ class _NinjaCardState extends State<NinjaCard> {
                 children: <Widget>[
                   Text(
                     'ID-NUMBER : ',
-                    style: TextStyle(
+                    style:GoogleFonts.specialElite(
+                        textStyle: TextStyle(
                       color: Colors.black,
                       letterSpacing: 2.0,
-                      fontSize: 15.0,
-                    ),
+                      fontSize: 18.0,
+                    )),
                   ),
                   SizedBox(width: 5.0),
                   Text(
                     user.employeeID,
-                    style: TextStyle(
+                    style:GoogleFonts.rambla(
+                        textStyle: TextStyle(
                       color: Colors.cyan[900],
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                       fontSize: 20.0,
                       letterSpacing: 2.0,
-                    ),
+                    )),
                   ),
                 ],
               ),
-              SizedBox(height: 15.0),
+              SizedBox(height: 10.0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
                     'NIC NUMBER ',
-                    style: TextStyle(
+                    style:GoogleFonts.specialElite(
+                        textStyle: TextStyle(
                       color: Colors.black,
                       letterSpacing: 2.0,
-                      fontSize: 15.0,
-                    ),
+                      fontSize: 18.0,
+                    )),
                   ),
                   SizedBox(height: 5.0),
                   Container(
                     width: MediaQuery.of(context).size.width*0.8,
                     child: Text(
                     '${user.nicnumber}',
-                      style: TextStyle(
+                      style:GoogleFonts.rambla(
+                        textStyle: TextStyle(
                         color: Colors.cyan[900],
                         fontWeight: FontWeight.bold,
                         fontSize: 20.0,
                         letterSpacing: 2.0,
-                      ),
+                      )),
                     ),
                   ), 
                 ],
               ),
-              SizedBox(height: 15.0),
+              SizedBox(height: 10.0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
                     'NAME : ',
-                    style: TextStyle(
+                    style: GoogleFonts.specialElite(
+                        textStyle:TextStyle(
                       color: Colors.black,
                       letterSpacing: 2.0,
-                      fontSize: 15.0,
-                    ),
+                      fontSize: 18.0,
+                    )),
                   ),
                   SizedBox(height: 5.0),
                   Container(
                     width: MediaQuery.of(context).size.width*0.5,
                     child: Text(
                     '${user.firstName} ${user.lastName}',
-                      style: TextStyle(
+                      style:GoogleFonts.rambla(
+                        textStyle: TextStyle(
                         color: Colors.cyan[900],
                         fontWeight: FontWeight.bold,
                         fontSize: 18.0,
                         letterSpacing: 2.0,
-                      ),
+                      )),
                     ),
                   ), 
                 ],
               ),
-              SizedBox(height: 15.0),
+              SizedBox(height: 10.0),
               Form(
                 key: _formkey,
                 child: Column(
@@ -152,102 +186,114 @@ class _NinjaCardState extends State<NinjaCard> {
                   children: <Widget>[
                     Text(
                       'ADDRESS : ',
-                      style: TextStyle(
+                      style: GoogleFonts.specialElite(
+                        textStyle:TextStyle(
                         color: Colors.black,
                         letterSpacing: 2.0,
-                        fontSize: 15.0,
-                      ),
+                        fontSize: 18.0,
+                      )),
                     ),
                 SizedBox(height: 5.0),
                 Container(
                   child: isEdit? TextFormField(
+                  key: Key('userAddress'),
                   autofocus: false,
                   decoration: textInputDecoration.copyWith(),
-                  validator: (val) => val.isEmpty ? 'Enter address' : null,
+                  validator: AddressFieldValidator.validate,
                   onChanged: (val){
                     setState(() => address = val.trim());;
                   },
                   initialValue: '${user.address}',
                 ): Container(
-                    width:MediaQuery.of(context).size.width*0.5 ,
+                    key: Key('HasUserAddress'),
+                    width:MediaQuery.of(context).size.width*0.6 ,
                   child: Text(
                       user.address,
-                      style: TextStyle(
+                      style:GoogleFonts.rambla(
+                        textStyle: TextStyle(
                         color: Colors.cyan[900],
                         fontWeight: FontWeight.bold,
                         fontSize: 20.0,
                         letterSpacing: 2.0,
-                      ),
+                      )),
                     ),
                 ),
                 ),
-                SizedBox(height: 15.0),
+                SizedBox(height: 10.0),
                 Text(
                   'PHONE NUMBER',
-                  style: TextStyle(
+                  style:GoogleFonts.specialElite(
+                    textStyle: TextStyle(
                     color: Colors.black,
                     letterSpacing: 2.0,
-                    fontSize: 15.0,
-                  ),
+                    fontSize: 18.0,
+                  )),
                 ),
                 SizedBox(height: 5.0),
                 Container(
                   child: isEdit? TextFormField(
+                    key: Key('PhoneNumber'),
                     autofocus: false,
                     decoration: textInputDecoration.copyWith(),
-                    validator: (val) => val.isEmpty || val.length < 10? 'Enter valid phone number' : null,
+                    validator: PhoneNumberFieldValidator.validate,
                     onChanged: (val){
                       setState(() => phoneNumber = val.trim());
                     },
                     initialValue: '${user.phoneNumber}',
                   ) :Text(
                     '${user.phoneNumber}',
-                    style: TextStyle(
+                    key: Key('HasUserNumber'),
+                    style:GoogleFonts.rambla(
+                      textStyle: TextStyle(
                       color: Colors.cyan[900],
                       fontWeight: FontWeight.bold,
                       fontSize: 20.0,
                       letterSpacing: 2.0,
-                    ),
+                    )),
                   ),
                 ),
-                SizedBox(height: 15.0),
+                SizedBox(height: 10.0),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'POLICESTATION : ',
-                      style: TextStyle(
+                      'POLICESTATION ID: ',
+                      style:GoogleFonts.specialElite(
+                        textStyle: TextStyle(
                         color: Colors.black,
                         letterSpacing: 2.0,
-                        fontSize: 15.0,
-                      ),
+                        fontSize: 18.0,
+                      )),
                     ),
                     SizedBox(width: 5.0),
                     Container(
                       width: MediaQuery.of(context).size.width*0.7,
                       child: Text(
-                        'B2 : Colombo',
-                        style: TextStyle(
+                        '${user.stationID}',
+                        style:GoogleFonts.rambla(
+                        textStyle: TextStyle(
                           color: Colors.cyan[900],
                           fontWeight: FontWeight.bold,
                           fontSize: 20.0,
                           letterSpacing: 2.0,
-                        ),
+                        )),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 15.0),
+                SizedBox(height: 10.0),
                 Container(
                   child: isEdit? TextFormField(
+                    key: Key('emailAddress'),
                   autofocus: false,
                   decoration: textInputDecoration.copyWith(),
-                  validator: (val) => val.isEmpty ? 'Enter email address' : null,
+                  validator: EmailAddressFieldValidator.validate,
                   onChanged: (val){
                      setState(() => email = val.trim());
                   },
                   initialValue: '${user.mailID}',
                 ) : Row(
+                  key: Key('Useremail'),
                     children: <Widget>[
                       Icon(
                         Icons.email,
@@ -257,11 +303,12 @@ class _NinjaCardState extends State<NinjaCard> {
                       Flexible(
                         child: Text(
                         user.mailID,
-                          style: TextStyle(
+                          style:GoogleFonts.rambla(
+                          textStyle: TextStyle(
                             color: Colors.cyan[900],
                             fontSize: 20.0,
                             letterSpacing: 1.0,
-                          ),
+                          )),
                         ),
                       )
                     ],
@@ -270,24 +317,28 @@ class _NinjaCardState extends State<NinjaCard> {
                 SizedBox(height: 15.0),
                 ButtonBar(
                   children: <Widget>[
-                    isEdit? Container() : FloatingActionButton.extended(
+                    isEdit? Container(key: Key('noreset'),) : FloatingActionButton.extended(
+                      key: Key('hasreset'),
                     onPressed: ()async{
-                      await AuthService().resetPassword(user.mailID);
+                      setState(() => loading = true);
+                      await widget.authservice.resetPassword(user.mailID);
                       setState(() => changePassword = true);
+                      setState(() => loading = false);
                     },
-                    label: Text('Change Password'),
+                    label: Text('Change Password',style:GoogleFonts.bitter()),
                     backgroundColor: Colors.cyan[900],
                   ),
                 isEdit? FloatingActionButton(
+                  key: Key('editprofile'),
                   onPressed: (){
                     if(_formkey.currentState.validate()){
-                      num mobileNumber;
-                      if(phoneNumber != null){
-                        mobileNumber = int.parse(phoneNumber);
-                      }
+                      // num mobileNumber;
+                      // if(phoneNumber != null){
+                      //   mobileNumber = int.parse(phoneNumber);
+                      // }
                       // setState(() => loading = true);
-                      DatabaseServicePolicemen(uid: user.userid).updateUserData(
-                        phoneNumber: mobileNumber ?? user.phoneNumber,
+                      widget.databaseServicePolicemen.updateUserData(
+                        phoneNumber: phoneNumber ?? user.phoneNumber,
                         address: address ?? user.address,
                         email: email ?? user.mailID
                         );
@@ -308,6 +359,7 @@ class _NinjaCardState extends State<NinjaCard> {
                 ),
                   backgroundColor: Colors.cyan[900],
                 ) : FloatingActionButton(
+                  key: Key('viewprofile'),
                   onPressed: (){
                     setState(() => isEdit = true);
                   },

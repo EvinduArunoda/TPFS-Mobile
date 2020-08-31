@@ -21,21 +21,26 @@ Future <List<Criminal>> getCriminalDetails(String criminalID) async{
         nicNumber: document.data['nicNumber'] ?? '',
         phoneNumber: document.data['phoneNumber'] ?? '',
         address: document.data['address'] ?? '',
-        offencesReference: document.data['offences'] ?? ''
+        offencesReference: document.data['offences'] ?? []
       );
   }
 
   Future<List<CriminalOffences>> getOffencesOfCriminals(List<dynamic>offencessnapshot)async{
     List<CriminalOffences> offences = [];
+    if(offencessnapshot != null){
     for (var i = 0; i < offencessnapshot.length; i++) {
       CriminalOffences offenceitem = await _offenceFromReference(offencessnapshot[i]);
       offences.add(offenceitem);
+    }
     }
     return offences;
   }
 
   Future<CriminalOffences> _offenceFromReference(dynamic offenceReference) async{
     DocumentSnapshot offencesnapshot = await offenceReference.get();
+    if(offencesnapshot.data == null){
+      return null;
+    }
     return CriminalOffences(
       date: offencesnapshot.data['date'] ?? '',
       offence: offencesnapshot.data['offence'] ?? '',

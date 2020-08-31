@@ -4,14 +4,22 @@ import 'package:tpfs_policeman/shared/constant.dart';
 import 'package:tpfs_policeman/shared/loading.dart';
 import 'package:tpfs_policeman/views/authenticate/sign_in.dart';
 
+class ResetEmailFieldValidator {
+  static String validate(String val) {
+    return val.isEmpty ? 'Enter an email address' : null;
+  }
+}
+
 class ResetPassword extends StatefulWidget {
+  final AuthService auth;
+  ResetPassword({Key key,this.auth}) : super(key:key);
   @override
   _ResetPasswordState createState() => _ResetPasswordState();
 }
 
 class _ResetPasswordState extends State<ResetPassword> {
 
-  final AuthService _auth = AuthService();
+  // final AuthService _auth = AuthService();
   final _formkey = GlobalKey<FormState>();
   bool loading = false;
 
@@ -25,9 +33,11 @@ class _ResetPasswordState extends State<ResetPassword> {
     return loading ? Loading() : Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        key: Key('ResetPasswordAppbar'),
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.cyan[900],
         elevation: 0.0,
-        title: Text('Reset Password'),
+        title: Text('Reset Password',key: Key('ResetPasswordApptext'),),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -42,6 +52,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                   isMessage? Container(
                     child: Column(children: <Widget>[
                         Center(
+                          key: Key('EmailSent'),
                           child: Text(
                             message,
                             textAlign: TextAlign.center,
@@ -50,16 +61,18 @@ class _ResetPasswordState extends State<ResetPassword> {
                         )
                     ],),
                   ):TextFormField(
+                    key: Key('ResetEmail'),
                     maxLines: 1,
                     autofocus: false,
                     decoration: textInputDecoration.copyWith(labelText: 'Email'),
-                    validator: (val) => val.isEmpty ? 'Enter an email address' : null,
+                    validator: ResetEmailFieldValidator.validate,
                     onChanged: (val){
                       setState(() => email = val.trim());
                     },
                   ),
                   SizedBox(height: 10.0),
-                  isMessage?Container():RaisedButton(
+                  isMessage?Container(key: Key('IsMessage'),):RaisedButton(
+                    key: Key('SendResetEmailButton'),
                     color: Colors.cyan[900],
                     child: Text(
                       'Send Email',
@@ -68,7 +81,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                     onPressed: () async{
                       if(_formkey.currentState.validate()){
                         setState(() => loading = true);
-                        isSuccess = await _auth.resetPassword(email);
+                        isSuccess = await widget.auth.resetPassword(email);
                         if(isSuccess){
                           setState(() {
                            message = 'An email with reset password link has been sent';
@@ -78,7 +91,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                         }
                         else{
                           setState(() {
-                            message = 'Account Not Found try again';
+                            message = 'Account Not Found TRY AGAIN';
                             isSuccess = false;
                             loading = false;
                           });
@@ -87,11 +100,13 @@ class _ResetPasswordState extends State<ResetPassword> {
                     }
                   ),
                   SizedBox(height: 5.0),
-                  isSuccess? Container(): Container(
+                  isSuccess? Container(key: Key('IsASuccess'),): Container(
+                    key: Key('IsNotSuccess'),
                     child: Column(children: <Widget>[
                         Center(
                           child: Text(
                             message,
+                            key: Key('IsNotSuccessMessage'),
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.red[900] , fontSize: 15.0),
                           ),
@@ -100,12 +115,13 @@ class _ResetPasswordState extends State<ResetPassword> {
                   ),
                   SizedBox(height: 20.0),
                   OutlineButton(
+                    key: Key('ReturnButton'),
                     child: Text(
                       'Return to SIGN IN ?',
                       style: TextStyle(color: Colors.cyan[900] , fontSize: 17.0),
                     ),
                     onPressed: () {
-                      Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => SignIn()));
+                      Navigator.pop(context);
                     }
                   ),
                 ] 

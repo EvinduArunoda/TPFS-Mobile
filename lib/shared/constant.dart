@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const textInputDecoration = InputDecoration(
   labelStyle: TextStyle(
@@ -17,8 +18,9 @@ const textInputDecoration = InputDecoration(
 );
 
 
-Container buildGridView (String name , IconData icon,Function whenPressed, String gridData, String step ) {
+Container buildGridView (String name , IconData icon,Function whenPressed, String gridData, String step,Key key ) {
     return Container(
+      key: key,
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -50,13 +52,14 @@ Container buildGridView (String name , IconData icon,Function whenPressed, Strin
                           SizedBox(height:5.0),
                           Text(
                             'Step $step',
-                            style: TextStyle(
+                            style: GoogleFonts.fjallaOne(
+                              textStyle:TextStyle(
                               color: Colors.red[900],
                               fontWeight: FontWeight.bold,
-                              fontFamily: 'Roboto',
-                              letterSpacing: 0.5,
-                              fontSize: 17,
-                            ),
+                              // fontFamily: 'Roboto',
+                              letterSpacing: 0.8,
+                              fontSize: 19,
+                            ),),
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height:0.0),
@@ -73,22 +76,25 @@ Container buildGridView (String name , IconData icon,Function whenPressed, Strin
                           SizedBox(height:0.0),
                           Text(
                             '$name',
-                            style: TextStyle(
+                            style:GoogleFonts.fjallaOne(
+                              textStyle: TextStyle(
                               color: Colors.black,
-                              fontWeight: FontWeight.w800,
-                              fontFamily: 'Roboto',
-                              letterSpacing: 0.5,
-                              fontSize: 18,
-                            ),
+                              fontWeight: FontWeight.w500,
+                              // fontFamily: 'Roboto',
+                              letterSpacing: 0.8,
+                              fontSize: 22,
+                            )),
                             textAlign: TextAlign.center,
                           ),
                           Text(
                             gridData.toUpperCase(),
-                            style: TextStyle(
+                            style:GoogleFonts.specialElite(
+                            textStyle: TextStyle(
                               color: Colors.red[700],
                               fontWeight: FontWeight.bold,
-                              fontSize: 18.0
-                          ),)
+                              fontSize: 18.0,
+                              letterSpacing: 1.5
+                          )),)
                         ],
                       ),
                     ),

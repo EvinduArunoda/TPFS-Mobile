@@ -1,20 +1,36 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:provider/provider.dart';
 import 'package:tpfs_policeman/models/Ticket.dart';
+import 'package:tpfs_policeman/models/procedure.dart';
 import 'package:tpfs_policeman/services/createTicket.dart';
-import 'package:tpfs_policeman/services/firebaseStorage.dart';
+import 'package:tpfs_policeman/shared/loading.dart';
 import 'package:tpfs_policeman/views/tickets/ticketHistory.dart';
 import 'package:tpfs_policeman/shared/constant.dart';
 import 'package:tpfs_policeman/models/user.dart';
 
+class OTPNumberValidator {
+  static String validate(String val) {
+    if(val.isEmpty){
+      return 'Enter a code';
+    }
+    else{
+      if(val.length==6){
+        return null;
+      }
+      else{
+        return 'Enter a valid code';
+      }}}
+}
 class FineTicket extends StatefulWidget {
   Ticket ticket ;
   HttpsCallable callable;
+  ProcedurePolice procedure;
 
-  FineTicket({@required this.ticket,@required this.callable});
+  FineTicket({@required this.ticket,@required this.callable,this.procedure});
   @override
   _FineTicketState createState() => _FineTicketState();
 }
@@ -23,10 +39,11 @@ class _FineTicketState extends State<FineTicket> {
 
   final _formKey = GlobalKey<FormState>();
   bool created = false;
-  int verificationCode = 0;
+  String verificationCode = '';
   String hashNum = '';
   num numOfTimes =0;
   String testCode = '';
+  bool loading = false;
   final time = DateTime.now();
 
   Widget getTextWidgets(){
@@ -54,6 +71,7 @@ class _FineTicketState extends State<FineTicket> {
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
       return AlertDialog(
+        key: Key('Acceptancedialog'),
         title: Text('Customer Acceptance',
         style: TextStyle(fontWeight: FontWeight.bold),),
         content: SingleChildScrollView(
@@ -78,6 +96,7 @@ class _FineTicketState extends State<FineTicket> {
               else{
               //send verification code
               print(widget.ticket.phoneNumber);
+              Navigator.of(context).pop();
               final HttpsCallableResult sentCode = await widget.callable.call(
                   <String, dynamic>{
                     'step' : '2',
@@ -86,7 +105,6 @@ class _FineTicketState extends State<FineTicket> {
                 );
                 setState(() => numOfTimes = numOfTimes + 1);
                 print(sentCode.data);
-                Navigator.of(context).pop();
                 List<dynamic> hashNumCode = sentCode.data;
                 print(hashNumCode[1]);
                 hashNum = hashNumCode[0];
@@ -96,6 +114,7 @@ class _FineTicketState extends State<FineTicket> {
             },
           ),
           FlatButton(
+            key: Key('Canceldialogacceptancebutton'),
             child: Text('CANCEL',
         style: TextStyle(fontWeight: FontWeight.bold),),
             onPressed: () {
@@ -155,21 +174,9 @@ class _FineTicketState extends State<FineTicket> {
                 child: TextFormField(
                   autofocus: false,
                   decoration: textInputDecoration.copyWith(),
-                  validator: (val) {
-                    if(val.isEmpty){
-                      return 'Enter a code';
-                    }
-                    else{
-                      if(val.length==6){
-                        return null;
-                      }
-                      else{
-                        return 'Enter a valid code';
-                      }
-                    }
-                  },
+                  validator: OTPNumberValidator.validate,
                   onChanged: (val){
-                  verificationCode = int.parse(val.trim());
+                  verificationCode = val.trim();
                 },
                 ),
               ),
@@ -187,6 +194,8 @@ class _FineTicketState extends State<FineTicket> {
                           print(hashNum);
                           print(testCode);
                           print(verificationCode);
+                          Navigator.of(context).pop();
+                          setState(() => loading = true);
                           final HttpsCallableResult checkCode = await widget.callable.call(
                             <String, dynamic>{
                               'step' : '3',
@@ -202,6 +211,8 @@ class _FineTicketState extends State<FineTicket> {
                             List<double> coding = await CreateTicketNew().getCoordinateOnly();
                             print(coding);
                             widget.ticket.status = 'open';
+                            DocumentReference ref = Firestore.instance.collection('Ticket').document();
+                            var id = ref.documentID;
                             final HttpsCallableResult saveData = await widget.callable.call(
                                <String, dynamic>{
                                  'step' : '4',
@@ -213,32 +224,37 @@ class _FineTicketState extends State<FineTicket> {
                                  'fineAmount' : widget.ticket.fineAmount,
                                  'area' : coding,
                                  'status' : 'open',
-                                 'offences' : widget.ticket.offences
+                                 'offences' : widget.ticket.offences,
+                                 'employeeID' : widget.ticket.policemenemployeeID,
+                                 'stationID' : widget.ticket.policemenstationID,
+                                 'licenseNumberImage' : widget.ticket.licenseNumberImageLocation,
+                                 'licensePlateImage' : widget.ticket.licensePlateImageLocation,
+                                 'DocumentRef' : id
                                },
                              );
                              print(saveData.data);
+                             widget.procedure.ticket = 'Successfully Created';
+                             widget.procedure.ticketCreated = CreateTicketNew().referenceFromID(saveData.data) ;
                             // final filepath = '${userUID.uid}:$time';
                             // print(filepath);
                             // String fileUsed = await Storage().uploadDriverTicketImage(widget.ticket.driverImagePath,widget.ticket.licenseNumber,filepath);
                             // // print(fileUsed);
                             // await Storage().uploadVehicleTicketImage( widget.ticket.vehicleImagePath, widget.ticket.licensePlate,fileUsed);
-                            Navigator.of(context).pop();
+//                            setState(() {
+//                              created = true;
+//                              loading = false;
+//                            });
+                            setState(() => loading = false);
                             setState(() => created = true);
                           }
                           else if(checkCode.data == 'falsebytime'){
-                            Navigator.of(context).pop();
+                            setState(() => loading = false);
                             showResult('Code has expired. Please try again');
                           }
                           else{
-                            Navigator.of(context).pop();
+                            setState(() => loading = false);
                             showResult('The code entered was incorrect.Please try again');
                           }
-                          // }
-                          // else{
-                          //   //if not right send a message through modal.With button to resend or cancel.if resend same modal again
-
-                          //   //modal with message the code doesnt match resend or expired resend
-                          // }
 
 
                         }
@@ -264,9 +280,14 @@ class _FineTicketState extends State<FineTicket> {
                       child: Text("REPORT",
                         style: TextStyle(fontWeight: FontWeight.bold),),
                       onPressed: () async{
+                        Navigator.of(context).pop();
+                        setState(() => loading = true);
                        List<double> coding = await CreateTicketNew().getCoordinateOnly();
                             print(coding);
+                            print(widget.ticket.phoneNumber);
                             widget.ticket.status = 'reported';
+                            DocumentReference ref = Firestore.instance.collection('Ticket').document();
+                            var id = ref.documentID;
                             final HttpsCallableResult saveData = await widget.callable.call(
                                <String, dynamic>{
                                  'step' : '4',
@@ -278,7 +299,12 @@ class _FineTicketState extends State<FineTicket> {
                                  'fineAmount' : widget.ticket.fineAmount,
                                  'area' : coding,
                                  'status' : 'reported',
-                                 'offences' : widget.ticket.offences
+                                 'offences' : widget.ticket.offences,
+                                 'employeeID' : widget.ticket.policemenemployeeID,
+                                 'stationID' : widget.ticket.policemenstationID,
+                                 'licenseNumberImage' : widget.ticket.licenseNumberImageLocation,
+                                 'licensePlateImage' : widget.ticket.licensePlateImageLocation,
+                                 'DocumentRef' : id
                                },
                              );
                             //  final filepath = '${userUID.uid}:$time';
@@ -287,8 +313,9 @@ class _FineTicketState extends State<FineTicket> {
                             //   // print(fileUsed);
                             //   await Storage().uploadVehicleTicketImage( widget.ticket.vehicleImagePath, widget.ticket.licensePlate,fileUsed);
                              print(saveData.data);
-                            Navigator.of(context).pop();
+                             widget.procedure.ticketCreated = CreateTicketNew().referenceFromID(saveData.data);
                             widget.ticket.fineAmount=0.0;
+                            setState(() => loading = false);
                             showFailureMessage('The ticket has been reported');
                         // hashNumCode = '12345'
                       },
@@ -369,6 +396,7 @@ class _FineTicketState extends State<FineTicket> {
                 fontSize: 16
             ),),
             onPressed: () {
+              widget.procedure.ticket = 'cancelled : $message';
               Navigator.of(context).pop();
               Navigator.popUntil(context, ModalRoute.withName("Process"));
             },
@@ -381,9 +409,11 @@ class _FineTicketState extends State<FineTicket> {
   @override
   Widget build(BuildContext context) {
     final userUID = Provider.of<User>(context);
-    return Scaffold(
+    return loading? LoadingAnother():Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        key: Key('Pagefourappbar'),
+        automaticallyImplyLeading: false,
         title: Text('Create Ticket'),
         centerTitle: true,
         backgroundColor: Colors.cyan[900],
@@ -398,6 +428,7 @@ class _FineTicketState extends State<FineTicket> {
               created ? Center(
                 child: Icon(
                   Icons.check_box,
+                  key: Key('checkboxiconpagefour'),
                   color: Colors.green,
                   size: 50.0,
                 ),
@@ -414,6 +445,7 @@ class _FineTicketState extends State<FineTicket> {
           ),
           ]),
                 child: Card(
+                  key: Key('ticketpagefourcard'),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(children: <Widget>[ 
@@ -529,16 +561,6 @@ class _FineTicketState extends State<FineTicket> {
                       width: MediaQuery.of(context).size.width*0.9,
 
                       child: getTextWidgets(),
-                      // Text(
-                      //   '10years from manufacture',
-                      //   textAlign: TextAlign.center,
-                      //   style: TextStyle(
-                      //     color: Colors.red[900],
-                      //     fontWeight: FontWeight.bold,
-                      //     fontSize: 16.0,
-                      //     letterSpacing: 2.0,
-                      //   ),
-                      // ),
                   ),
                 ),         
                 SizedBox(height: 7.0),
@@ -553,7 +575,7 @@ class _FineTicketState extends State<FineTicket> {
                 ),
                 SizedBox(height: 10.0),
                 Text(
-                    '${widget.ticket.fineAmount}',
+                    '${widget.ticket.fineAmount.floorToDouble()}',
                     style: TextStyle(
                       color: Colors.red[900],
                       fontWeight: FontWeight.bold,
@@ -570,8 +592,11 @@ class _FineTicketState extends State<FineTicket> {
                 height: 23.0,
               ),
               created? Center(
-                child: RaisedButton( 
-                  onPressed: () {Navigator.popUntil(context, ModalRoute.withName("Process"));},
+                child: RaisedButton(
+                  key: Key('Closeticketbutton'),
+                  onPressed: () {
+                    Navigator.popUntil(context, ModalRoute.withName("Process"));
+                    },
                   color: Colors.cyan[900],
                   elevation: 1,
                   child: Padding(
@@ -587,9 +612,11 @@ class _FineTicketState extends State<FineTicket> {
                       ),
                   ),),
               ) : ButtonBar(
+                key: Key('Ticketnotcreatedbuttonbar'),
                 mainAxisSize: MainAxisSize.max,
                 children:<Widget>[
                   RaisedButton(
+                    key: Key('createticketbuttonpagefour'),
                     onPressed: () => showContent(userUID),
                     color: Colors.cyan[900],
                     elevation: 1,
@@ -608,12 +635,14 @@ class _FineTicketState extends State<FineTicket> {
                     // backgroundColor: Colors.cyan[900],
                   ),
                   RaisedButton(
+                    key: Key('cancelticketbuttonpagefour'),
                     onPressed: (){
                       widget.ticket.offences = null;
                       widget.ticket.fineAmount = null;
                       widget.ticket.vehicle = null;
                       //Navigator.popUntil(context, ModalRoute.withName("Process"));
-                      Navigator.pop(context);
+                      widget.ticket.status = 'closed';
+                      Navigator.popUntil(context, ModalRoute.withName("Process"));
                     },
                     color: Colors.cyan[900],
                     elevation: 1,

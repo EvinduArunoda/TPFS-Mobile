@@ -19,30 +19,14 @@ class VehicleCollection{
   Vehicle _vehicleFromDocument(DocumentSnapshot document){
       return Vehicle(
         licensePlate: document.data['LicensePlate'] ?? '',
-        insuranceNumber: document.data['Insurance Number'] ?? '',
-        makeAndModel: document.data['Make and model'] ?? '',
-        regOwner: document.data['Registered Owner'] ?? '',
-        regownerNumber: document.data['Register Number'] ?? '',
-        conditionAndClass: document.data['Vehicle Conditon and classs'] ?? '',
-        regNICNumber: document.data['OwnerNICNumber'] ?? ''  
+        insuranceNumber: document.data['insuranceNumber'] ?? '',
+        makeAndModel: document.data['makeAndModel'] ?? '',
+        regOwner: document.data['registeredOwner'] ?? '',
+        regownerNumber: document.data['registeredNumber'] ?? '',
+        conditionAndClass: document.data['vehicleConditionAndClasses'] ?? [],
+        regNICNumber: document.data['ownerID'] ?? ''
       );
   }
-
-  //   Future<List<Ticket>> ticketOfVehicle(String licensePlateNumber) async{
-  //   List<DocumentSnapshot> ticketDetails;
-  //   List<Ticket> tickets;
-  //   ticketDetails = (await Firestore.instance
-  //       .collection("Ticket")
-  //       .where("LicensePlate", isEqualTo: licensePlateNumber)
-  //       .getDocuments())
-  //       .documents;
-  //   if(ticketDetails.isEmpty){
-  //     return null;
-  //   }
-  //   else{
-  //     return tickets = ticketDetails.map(_ticketFromDocument).toList();
-  //   }
-  // }
 
   Ticket _ticketFromDocument(DocumentSnapshot document){
     return Ticket(
@@ -52,9 +36,9 @@ class VehicleCollection{
       date: document.data['Date'] ?? '',
       timestamp: document.data['Time'] ?? '',
       vehicle: document.data['Vehicle'] ?? '',
-      fineAmount: document.data['FineAmount'] ?? 0,
+      fineAmount: document.data['FineAmount'] ?? 0.0,
       status: document.data['Status'] ?? '',
-      offences: document.data['Offences'] ?? '' 
+      offences: document.data['Offences'] ?? [] 
     );
   }
 
@@ -93,17 +77,5 @@ class VehicleCollection{
         .documents;
   return outstandingTickets = outstandingtTicketDetails.map(_ticketFromDocument).toList();    
 }
-
-//   Future<List<Ticket>> _ticketsDetails(String licensePlate) async{
-//   List<DocumentSnapshot> outstandingtTicketDetails;
-//   List<Ticket> outstandingTickets;
-//   outstandingtTicketDetails = (await Firestore.instance
-//       .collection("Ticket")
-//       .where("LicensePlate", isEqualTo: licensePlate)
-//       .where('status', isEqualTo: 'pending')
-//       .getDocuments())
-//       .documents;
-//   return outstandingTickets = outstandingtTicketDetails.map(_ticketFromDocument).toList();    
-// }
 
 }

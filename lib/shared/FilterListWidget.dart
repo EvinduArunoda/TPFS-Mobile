@@ -152,6 +152,7 @@ class _FilterListWidgetState extends State<FilterListWidget> {
                 Expanded(
                   flex: 1,
                   child: InkWell(
+                    key: Key('CloseFilterIcon'),
                     borderRadius: BorderRadius.all(Radius.circular(30)),
                     onTap: () {
                       Navigator.pop(context, null);
@@ -211,6 +212,7 @@ class _FilterListWidgetState extends State<FilterListWidget> {
         var selectedText = _selectedTextList.contains(item);
         choices.add(
           ChoicechipWidget(
+            key: Key('Choice$item'),
             onSelected: (value) {
               setState(
                 () {
@@ -282,6 +284,7 @@ class _FilterListWidgetState extends State<FilterListWidget> {
 //                      alignment: Alignment.center,
                         child: Text(
                           'All',
+                          key: Key('AllButton'),
                           style: Theme.of(context).textTheme.headline.copyWith(
                               fontSize: 15, color: widget.allResetButonColor),
 //                        textAlign: TextAlign.center,
@@ -303,6 +306,7 @@ class _FilterListWidgetState extends State<FilterListWidget> {
                           fit: BoxFit.contain,
                           child: Text(
                             'Reset',
+                            key: Key('ResetButton'),
                             style: Theme.of(context).textTheme.headline.copyWith(
                                 fontSize: 15, color: widget.allResetButonColor),
                             textAlign: TextAlign.center,
@@ -311,6 +315,7 @@ class _FilterListWidgetState extends State<FilterListWidget> {
                       ),
                     ),
                     MaterialButton(
+                      key: Key('ApplyButton'),
                       color: widget.applyButonTextBackgroundColor,
                       padding: EdgeInsets.only(bottom: 5),
                       shape: RoundedRectangleBorder(

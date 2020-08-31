@@ -1,5 +1,8 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tpfs_policeman/models/criminal.dart';
+import 'package:tpfs_policeman/models/procedure.dart';
 import 'package:tpfs_policeman/models/user.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -17,8 +20,9 @@ import 'package:tpfs_policeman/views/CA%20module/viewResult.dart';
  class TakePicture extends StatefulWidget {
    CameraDescription camera;
    String imagePath;
+   ProcedurePolice procedure;
 
-   TakePicture({this.camera,this.imagePath});
+   TakePicture({this.camera,this.imagePath,@required this.procedure,Key key}):super(key:key);
    @override
    _TakePictureState createState() => _TakePictureState();
  }
@@ -75,19 +79,22 @@ import 'package:tpfs_policeman/views/CA%20module/viewResult.dart';
       if(widget.imagePath != null){
         isImage = true;
       }
-      return loading ? Loading() :Scaffold(
+      return loading ? LoadingAnother() :Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        key: Key('CAAppBar'),
         title : Padding(
           padding: const EdgeInsets.all(10.0),
           child: Text(
             'Criminal Assessment',
-            style: TextStyle(
+            key: Key('CAAppBarText'),
+            style: GoogleFonts.orbitron(
+            textStyle :TextStyle(
               fontWeight: FontWeight.w800,
               fontFamily: 'Roboto',
               letterSpacing: 0.5,
-              fontSize: 25,
-            ),),
+              fontSize: 20,
+            )),),
         ),
         backgroundColor: Colors.cyan[900],
         elevation: 10.0,
@@ -102,11 +109,13 @@ import 'package:tpfs_policeman/views/CA%20module/viewResult.dart';
                 child: Column(
                   children: <Widget>[
                     isImage? Container(
+                      key: Key('IsImageimage'),
 //                      child:RotationTransition(turns:AlwaysStoppedAnimation(270 / 360),child: Image.file(File(widget.imagePath))),
                       child:Image.file(File(widget.imagePath)),
                     ) : Column(
                       children : <Widget>[
                         IconButton(
+                          key: Key('CAIcon'),
                         icon: Icon(
                           FontAwesomeIcons.cameraRetro,
                           color: Colors.cyan[900],
@@ -117,28 +126,33 @@ import 'package:tpfs_policeman/views/CA%20module/viewResult.dart';
                     SizedBox(height:10.0),
                     Text(
                       'Take New Picture',
+                      key: Key('TitleCA'),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: GoogleFonts.fjallaOne(
+                        textStyle: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
                         fontSize: 23.0,                        
-                      ),
+                      )),
                     ),
                     SizedBox(height:14.0),
                     Text(
                       'Click to start taking picture for criminal assessment',
+                      key: Key('TextCA'),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: GoogleFonts.specialElite(
+                        textStyle: TextStyle(
                         color: Colors.black,
                         fontFamily: 'Roboto',
                         letterSpacing: 0.5,
                         fontSize: 16.0,                        
-                      ),
+                      )),
                     ),
                       ]),
                     SizedBox(height:30.0),
                     FloatingActionButton.extended(
+                      key: Key('CAassessbutton'),
                       onPressed: ()async{
                         if(isImage){
                           setState(() => loading = true);
@@ -154,19 +168,24 @@ import 'package:tpfs_policeman/views/CA%20module/viewResult.dart';
                        ).catchError((onError){
                          print(Error);
                        });
-//                       print(criminalresult.data);
                           var resultid = '';
                           var resultCoorelation = '';
                         //get the result and check if it is unknown or any other
                           if(criminalresult != null){
-                            resultid = criminalresult.data['personNIC'];
-                            resultCoorelation = criminalresult.data['corelation'];
+                            var criminaldetails = criminalresult.data;
+                            DocumentReference docref = Firestore.instance.collection('CriminalAssessment').document(filepath);
+                            widget.procedure.criminalAssessment = [];
+                            widget.procedure.criminalAssessment.add(docref);
+                            print('${widget.procedure.criminalAssessment}');
+//                            print('${widget.procedure.criminalAssessment}');
+                            resultid = criminaldetails['personNIC'];
+                            resultCoorelation = criminaldetails['corelation'];
                             print(resultid);
                             print(resultCoorelation);
                           }
                         if(resultid == 'unknown'){
                           setState(() => loading = false);
-                          Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => NoMatch(imagePath: widget.imagePath)));
+                          Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => NoMatch(imagePath: widget.imagePath,key: Key('NoMatchPage'),)));
                         }
                         else if(resultid == ''){
                           setState(() => loading = false);
@@ -178,18 +197,29 @@ import 'package:tpfs_policeman/views/CA%20module/viewResult.dart';
                           List<Criminal> matchdriverDetails = await CriminalAssessment().getCriminalDetails(resultid);
                           print(matchdriverDetails);
                           setState(() => loading = false);
-                          Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => ViewResult(assessDriverImagePath: widget.imagePath,matchDriverImagePath: matchdriverImage,criminalDetails: matchdriverDetails[0],filepath: filepath,corelation: resultCoorelation)));
+                          Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => ViewResult(assessDriverImagePath: widget.imagePath,matchDriverImagePath: matchdriverImage,criminalDetails: matchdriverDetails[0],
+                                      filepath: filepath,corelation: resultCoorelation,assessCriminal: CriminalAssessment(),key: Key('MatchPage'),)));
                         }
                         }
                         else{
                         print(widget.imagePath);
-                        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => TakePictureScreen(camera: widget.camera, reason: '1')));
+                        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => TakePictureScreen(camera: widget.camera, reason: '1',key: Key('CameraScreen'),procedure: widget.procedure,)));
                         }
                       },
-                      label: isImage? Text('Check Criminal History', style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17),) : Text('Take Picture'),
-                      icon: isImage? Icon(Icons.assignment_ind) :Icon(Icons.add_a_photo),
+                      label: isImage? Text('Check Criminal History', key:Key('Checktext'),style: GoogleFonts.bitter(
+                        textStyle: TextStyle(fontWeight: FontWeight.bold,fontSize: 14)),) : Text('Take Picture',key: Key('TakeText'),style: GoogleFonts.bitter(),),
+                      icon: isImage? Icon(Icons.assignment_ind,key: Key('ImageIcon'),) :Icon(Icons.add_a_photo,key: Key('NoImageIcon'),),
                       backgroundColor: Colors.blueGrey,
-                      )
+                      ),
+//                    isImage ? OutlineButton(
+//                      onPressed: (){
+//                        Navigator.push(context,MaterialPageRoute(builder: (context) => TakePictureScreen(camera: widget.camera, reason: '1',key: Key('CameraScreen'),)));
+//                      },
+//                      child: Text(
+//                        'Retake Image?',
+//                        style: TextStyle(color: Colors.cyan[900] , fontSize: 16.0),
+//                      ),
+//                    ) : Container()
                   ]
                 ),
               ),

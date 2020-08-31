@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tpfs_policeman/models/Ticket.dart';
 import 'package:tpfs_policeman/services/auth.dart';
 import 'package:tpfs_policeman/services/db_policeman.dart';
@@ -10,7 +11,7 @@ class TicketDetails extends StatelessWidget {
 
   final Ticket ticket;
 
-  TicketDetails({this.ticket});
+  TicketDetails({this.ticket,Key key}):super(key:key);
 
   // final AuthService _auth = AuthService();
   @override
@@ -18,7 +19,8 @@ class TicketDetails extends StatelessWidget {
     return Scaffold(
     backgroundColor: Colors.white,
     appBar: AppBar(
-      title : Text('Ticket Details'),
+      leading: BackButton(key:Key('goBackVehicle')),
+      title : Text('Ticket Details',style: GoogleFonts.orbitron(textStyle: TextStyle(letterSpacing: 2.5,fontSize: 20.0))),
       backgroundColor: Colors.cyan[900],
       elevation: 10.0,
     ),

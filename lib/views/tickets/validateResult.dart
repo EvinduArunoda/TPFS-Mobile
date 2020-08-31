@@ -19,6 +19,7 @@ class _ValidateResultState extends State<ValidateResult> {
   var license;
   var coorelation;
   var match = 'Validation On Process';
+  var noresults = 'No License Plate Found';
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<Validate>(context);
@@ -28,23 +29,37 @@ class _ValidateResultState extends State<ValidateResult> {
 
     }
     else{
-
-      Map maximumscoreprediction = user.licensePlateValidation['prediction'][0];
-      for (var i = 1; i < (user.licensePlateValidation['prediction'].length -1); i++) {
-        if(user.licensePlateValidation['prediction'][i]['score']>maximumscoreprediction['score']){
-          maximumscoreprediction = user.licensePlateValidation['prediction'][i];
+      print(user.licensePlateValidation['prediction'].isNotEmpty);
+      if((user.licensePlateValidation['prediction'].isNotEmpty) && (user.licensePlateValidation['prediction'] != null)) {
+        Map maximumscoreprediction = user
+            .licensePlateValidation['prediction'][0];
+        for (var i = 1; i <
+            (user.licensePlateValidation['prediction'].length); i++) {
+          if (user.licensePlateValidation['prediction'][i]['score'] >
+              maximumscoreprediction['score']) {
+            maximumscoreprediction =
+            user.licensePlateValidation['prediction'][i];
+          }
         }
+        license = maximumscoreprediction['ocr_text'];
+        widget.ticketvalidate.licenseplate = license;
+        widget.ticket.validatedText = license;
+        coorelation = maximumscoreprediction['score'];
+        coorelation = (coorelation * 100).toString();
+        widget.ticket.validatedTextScore = coorelation;
       }
-      license = maximumscoreprediction['ocr_text'];
-      widget.ticketvalidate.licenseplate = license;
-      widget.ticket.validatedText = license;
-      coorelation = maximumscoreprediction['score'];
-      coorelation = (coorelation*100).toString().substring(0,5);
-      widget.ticket.validatedTextScore = coorelation;
+      else{
+        license = noresults;
+        coorelation = noresults;
+        widget.ticket.validatedText = noresults;
+        widget.ticket.validatedTextScore = noresults;
+
+      }
     }
     //
     return Container(
        child: Column(
+         key: Key('Columnvalidatematch'),
          crossAxisAlignment: CrossAxisAlignment.start,
          children: <Widget>[
            Column(

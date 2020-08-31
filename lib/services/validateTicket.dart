@@ -9,6 +9,7 @@ class ValidateTicket{
 
   Stream <Validate> get ticketValidation {
     try{
+      print('filepathget $filepath');
       return Firestore.instance.collection('TicketValidate').document(filepath).snapshots()
     .map( _validateModelFromSnapshot);
     }catch(e){
@@ -21,7 +22,7 @@ class ValidateTicket{
   Validate _validateModelFromSnapshot(DocumentSnapshot snapshot){
       return snapshot.data != null ? Validate(
         docid : snapshot.data['id'] ?? '',
-        licensePlateValidation: snapshot.data['LicensePlateImage'] ?? ''
+        licensePlateValidation: snapshot.data['LicensePlateImageResult'] ?? {}
       ) : null;
     // }).toList();
   }

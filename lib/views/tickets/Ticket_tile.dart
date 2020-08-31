@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tpfs_policeman/models/Ticket.dart';
 import 'package:tpfs_policeman/views/tickets/ticketDetails.dart';
 
 class TicketTile extends StatelessWidget {
   final Ticket ticket;
 
-  TicketTile({this.ticket});
+  TicketTile({this.ticket,Key key}):super(key:key);
 
   Widget getTextWidgets(){
     return new Column(crossAxisAlignment: CrossAxisAlignment.start,children: ticket.offences.map((item) => Container(
@@ -13,12 +14,13 @@ class TicketTile extends StatelessWidget {
         padding: const EdgeInsets.only(bottom:2.0),
         child: new Text(
           item,
-          style: TextStyle(
+          style: GoogleFonts.specialElite(
+            textStyle: TextStyle(
             color: Colors.red[900],
             fontWeight: FontWeight.bold,
             fontSize: 12.0,
             letterSpacing: 2.0,
-          ),
+          )),
         ),
       ),
     )).toList());
@@ -40,8 +42,9 @@ class TicketTile extends StatelessWidget {
               color: Colors.white,
               // margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 5.0),
               child: ListTile(
+                key: Key('ListTile'),
                 onTap: (){
-                  Navigator.push(context,MaterialPageRoute(builder: (context) => TicketDetails(ticket: ticket)),
+                  Navigator.push(context,MaterialPageRoute(builder: (context) => TicketDetails(ticket: ticket,key: Key('Details'),)),
                   );
                 },
                 dense: true,
@@ -60,13 +63,16 @@ class TicketTile extends StatelessWidget {
                             ),
                           ),
                           SizedBox(width: 10.0),
-                          Text(
-                            '${ticket.fineAmount}',
-                            style: TextStyle(
-                              color: Colors.cyan[900],
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0,
-                              letterSpacing: 2.0,
+                          FittedBox(
+                            fit: BoxFit.contain,
+                            child: Text(
+                              '${ticket.fineAmount}',
+                              style: TextStyle(
+                                color: Colors.cyan[900],
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14.0,
+                                letterSpacing: 2.0,
+                              )
                             ),
                           ),
                         ],
@@ -88,12 +94,13 @@ class TicketTile extends StatelessWidget {
                               width: MediaQuery.of(context).size.width*0.4,
                               child: Text(
                                 ticket.status.toUpperCase(),
-                                style: TextStyle(
+                                style: GoogleFonts.specialElite(
+                                  textStyle: TextStyle(
                                   color: Colors.red[900],
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16.0,
+                                  fontSize: 14.0,
                                   letterSpacing: 2.0,
-                                ),
+                                )),
                               ),
                             ),
                           ),
@@ -131,12 +138,14 @@ class TicketTile extends StatelessWidget {
                   children:<Widget>[
                     Text(
                       ticket.date,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                      style: GoogleFonts.specialElite(
+                        textStyle: TextStyle(fontWeight: FontWeight.bold),
+                      )),
                     Text(
                       ticket.time,
-                       style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                       style: GoogleFonts.specialElite(
+                         textStyle: TextStyle(fontWeight: FontWeight.bold),
+                      )),
                   ]
                 ),
               ),

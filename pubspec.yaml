@@ -32,11 +32,11 @@ dependencies:
   flutter_spinkit: ^4.1.2+1
   cloud_functions: ^0.4.2+3
   flappy_search_bar: ^1.7.2
-  intl: ^0.16.1
+  intl: ^0.16.0
   firebase_messaging: ^6.0.13
   font_awesome_flutter: ^8.8.1
   geocoder: ^0.2.1
-  # flutter_exif_rotation: ^0.2.7
+  google_fonts: any
   firebase_storage: ^3.1.5
   geoflutterfire: ^2.1.0
   badges: ^1.1.1
@@ -45,18 +45,27 @@ dependencies:
   location: ^3.0.0
   get_it: ^4.0.2
   string_validator: ^0.1.4
+  cloud_firestore_mocks: ^0.4.4
+  firebase_storage_mocks: ^0.1.0
+
   
 
   
 dev_dependencies:
-  flutter_test:
+  # flutter_test:
+  #   sdk: flutter
+  flutter_driver:
     sdk: flutter
+  test: any
   flutter_launcher_icons: ^0.7.5
+  mockito: ^4.1.1
+  network_image_mock: ^1.0.0
+
 
 flutter_icons:
   android: true
-  image_path_ios: "assets/launcher/foreground.png"
-  image_path_android: "assets/launcher/foreground.png"
+  image_path_ios: "assets/launcher/full.png"
+  image_path_android: "assets/launcher/full.png"
   adaptive_icon_background: "assets/launcher/background.png"
   adaptive_icon_foreground: "assets/launcher/foreground.png"
 
@@ -73,8 +82,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - assets/krish.jpg
+  assets:
+    - google_fonts/
   # - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

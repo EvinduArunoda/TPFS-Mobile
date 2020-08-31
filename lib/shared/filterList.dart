@@ -41,6 +41,7 @@ class FilterList {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
+          key: Key('FilterListDialog'),
           elevation: 0,
           backgroundColor: Colors.transparent,
           child: Container(
@@ -48,6 +49,7 @@ class FilterList {
             width: width,
             color: Colors.transparent,
             child: FilterListWidget(
+              key: Key('FilterListWidget'),
               height: height,
               width: width,
               borderRadius: borderRadius,

@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:camera/camera.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:geolocator/geolocator.dart';
 import 'package:tpfs_policeman/models/user.dart';
 import 'package:tpfs_policeman/services/auth.dart';
-import 'package:tpfs_policeman/services/locator.dart';
 import 'package:tpfs_policeman/services/pushNotification.dart';
 import 'package:tpfs_policeman/wrapper.dart';
 import 'package:flutter/material.dart';
@@ -19,12 +21,11 @@ Future<Null> main() async {
   print(cameras);
 
   // Get a specific camera from the list of available cameras.
-  final firstCamera = cameras.last;
-  setupLocator();
-  runApp(MyApp(camera: firstCamera));
+  // final firstCamera = cameras.last;
+  runApp(MyApp(camera: cameras));
 }
 class MyApp extends StatefulWidget {
-  CameraDescription camera;
+  List<CameraDescription> camera;
 
   MyApp({this.camera});
   @override
@@ -35,32 +36,13 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState(){
     super.initState();
-//    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-//    await _firebaseMessaging.subscribeToTopic('puppies');
     final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
     bool _initialized = false;
     if (!_initialized) {
-      // For iOS request permission first.
       _firebaseMessaging.requestNotificationPermissions();
       _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
           print("onMessage: $message");
-          new Future.delayed(Duration.zero, () {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              content: ListTile(
-                title: Text(message['notification']['title']),
-                subtitle: Text(message['notification']['body']),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Ok'),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-          );});
         },
         // onBackgroundMessage: myBackgroundMessageHandler,
 
@@ -73,12 +55,7 @@ class _MyAppState extends State<MyApp> {
           // _navigateToItemDetail(message);
         },
       );
-
-      // For testing purposes print the Firebase Messaging token
-//      String token = await _firebaseMessaging.getToken();
       _firebaseMessaging.subscribeToTopic('puppies');
-//      deviceToken = token;
-//      print("FirebaseMessaging token: $token");
 
       _initialized = true;
     }

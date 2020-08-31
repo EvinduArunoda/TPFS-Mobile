@@ -15,6 +15,7 @@ class DriverCollection{
         .where("LicenseNumber", isEqualTo: licensePlateNum)
         .getDocuments())
         .documents;
+    print(driverDetails);
     return drivers = driverDetails.map(_driverFromDocument).toList();
   }
 
@@ -22,30 +23,13 @@ class DriverCollection{
       return Driver(
         licenseNumber: document.data['LicenseNumber'] ?? '',
         name: document.data['name'] ?? '',
-        phoneNumber: document.data['Phone Number'] ?? '',
-        physicalDisabilities: document.data['physical disabilities'] ?? '',
+        phoneNumber: int.parse(document.data['phonenumber']) ?? 0000000000,
+        physicalDisabilities: document.data['physicaldisabilities'] ?? [],
         address: document.data['address'] ?? '',
-        emailAddress: document.data['email address'] ?? '',
-        nicnumber: document.data['NICNumber'] ?? ''  
+        emailAddress: document.data['emailaddress'] ?? '',
+        nicnumber: document.data['NIC'] ?? ''
       );
   }
-
-  // Future<List<Ticket>> ticketOfDriver(String licenseNumber) async{
-  //   List<DocumentSnapshot> ticketDetails;
-  //   List<Ticket> tickets;
-  //   ticketDetails = (await Firestore.instance
-  //       .collection("Ticket")
-  //       .where("LicenseNumber", isEqualTo: licenseNumber)
-  //       .getDocuments())
-  //       .documents;
-  //   print(ticketDetails);
-  //   if(ticketDetails.isEmpty){
-  //     return null;
-  //   }
-  //   else{
-  //     return tickets = ticketDetails.map(_ticketFromDocument).toList();
-  //   }
-  // }
 
   Ticket _ticketFromDocument(DocumentSnapshot document){
     return Ticket(
@@ -55,9 +39,9 @@ class DriverCollection{
       date: document.data['Date'] ?? '',
       timestamp: document.data['Time'] ?? '',
       vehicle: document.data['Vehicle'] ?? '',
-      fineAmount: document.data['FineAmount'] ?? 0,
+      fineAmount: document.data['FineAmount'] ?? 0.0,
       status: document.data['Status'] ?? '', 
-      offences: document.data['Offences'] ?? ''
+      offences: document.data['Offences'] ?? []
     );
   }
 

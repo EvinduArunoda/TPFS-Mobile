@@ -1,4 +1,5 @@
 // import 'package:filter_list/filter_list.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tpfs_policeman/shared/filterList.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -79,15 +80,19 @@ class _TicketHistoryState extends State<TicketHistory> {
         }
 
       return DefaultTabController(
+        key: Key('TicketHistoryTab'),
         length: 3,
         child: Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
-            title : Text('Ticket History'.toUpperCase()),
+            key: Key('TicketAppBarHistory'),
+            leading: BackButton(key:Key('goBackVehicle')),
+            title : Text('Ticket History'.toUpperCase(),style: GoogleFonts.orbitron(letterSpacing: 1.5,fontSize: 20.0),),
             backgroundColor: Colors.cyan[900],
             elevation: 10.0,
             actions: <Widget>[
               IconButton(
+                key: Key('FilterTicketsWidget'),
             onPressed: ()async{
               // print(widget.offencelist);
              await _openFilterList();
@@ -118,28 +123,33 @@ class _TicketHistoryState extends State<TicketHistory> {
             SizedBox(width: 10.0,)
             ],
             bottom: TabBar(
+              key: Key('TopTabBarTickets'),
               indicatorColor: Colors.orange,
               tabs: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: FittedBox(fit: BoxFit.contain,child: Text('Outstanding'.toUpperCase(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15.0))),
+                  child: FittedBox(fit: BoxFit.contain,child: Text('Outstanding'.toUpperCase(),key: Key('Outstanding'),style:GoogleFonts.bitter(
+                        textStyle: TextStyle(fontWeight: FontWeight.bold,fontSize: 15.0)))),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: FittedBox(fit: BoxFit.contain,child: Text('Paid'.toUpperCase(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13.0))),
+                  child: FittedBox(fit: BoxFit.contain,child: Text('Paid'.toUpperCase(),key: Key('Paid'),style:GoogleFonts.bitter(
+                        textStyle: TextStyle(fontWeight: FontWeight.bold,fontSize: 13.0)))),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: FittedBox(fit: BoxFit.contain,child: Text('Reported'.toUpperCase(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13.0))),
+                  child: FittedBox(fit: BoxFit.contain,child: Text('Reported'.toUpperCase(),key: Key('Reported'),style:GoogleFonts.bitter(
+                        textStyle: TextStyle(fontWeight: FontWeight.bold,fontSize: 13.0)))),
                 ),
               ]
             )
           ),
           body: TabBarView(
+            key: Key('ViewBodyTab'),
             children: <Widget>[
-              outstandingHistory? Ticketlist(tickets: widget.outstandingTickets) : NoHistory(),
-              paidHistory? Ticketlist(tickets: widget.paidTickets) : NoHistory(),
-              reported? Ticketlist(tickets: widget.reportedTickets) : NoHistory(),
+              outstandingHistory? Ticketlist(tickets: widget.outstandingTickets,key: Key('outHistory')) : NoHistory(key: Key('nooutHistory')),
+              paidHistory? Ticketlist(tickets: widget.paidTickets,key: Key('paidHistory')) : NoHistory(key: Key('nopaidHistory')),
+              reported? Ticketlist(tickets: widget.reportedTickets,key: Key('repHistory')) : NoHistory(key: Key('norepHistory')),
             ],
           ),
             ),
@@ -148,6 +158,7 @@ class _TicketHistoryState extends State<TicketHistory> {
 }
 
 class NoHistory extends StatelessWidget {
+  NoHistory({Key key}):super(key:key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -157,8 +168,9 @@ class NoHistory extends StatelessWidget {
         child: Text(
           'NO RESULTS FOUND',
           textAlign: TextAlign.center,
-          style: TextStyle(fontFamily: 'Roberto',color: Colors.red[900] , fontSize: 25.0,fontWeight: FontWeight.w700),
-          ),
+          style: GoogleFonts.orbitron(
+    textStyle: TextStyle(fontFamily: 'Roberto',color: Colors.red[900] , fontSize: 25.0,fontWeight: FontWeight.w700),
+          )),
       ),
     );
   }
