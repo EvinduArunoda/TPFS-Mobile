@@ -1,3 +1,5 @@
+//Driver modal class used to store driver details fetched during driver license number search
+
 class Driver {
   
   final String licenseNumber;

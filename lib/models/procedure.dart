@@ -1,3 +1,4 @@
+//Procedure modal class used to store data of each procedure carried out bu policemen when creating ticket
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 

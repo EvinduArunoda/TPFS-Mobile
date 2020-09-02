@@ -1,3 +1,5 @@
+//Fine modal class used to store fine data fetched during creation of ticket
+
 class Fine {
 
   final String fineDescription;

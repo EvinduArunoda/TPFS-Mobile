@@ -7,6 +7,7 @@ import 'package:tpfs_policeman/views/authenticate/authenticate.dart';
 import 'package:tpfs_policeman/models/user.dart';
 import 'package:tpfs_policeman/views/home/HomePage.dart';
 
+//navigate user to sign in page or home page based on session credentials
 class Wrapper extends StatelessWidget {
   List<CameraDescription> firstCamera;
 

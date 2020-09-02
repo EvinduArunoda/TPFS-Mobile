@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tpfs_policeman/models/offences.dart';
+//Criminal modal class to store the data of the matched criminal faces during criminal assesment 
 
 class Criminal{
     String name;

@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+//user modal class used to store data of profile of policemen using the application
 
 class User {
 

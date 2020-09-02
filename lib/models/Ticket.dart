@@ -1,13 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:tpfs_policeman/models/fine.dart';
+//Ticket modal class used to store data of ticket created during each procedure
 
 class  Ticket{
   
   String licensePlate;
   String licenseNumber;
   num phoneNumber;
-
   String area;
   String date;
   String time;

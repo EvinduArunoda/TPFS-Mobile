@@ -1,3 +1,5 @@
+//vehicle modal class used to store data of vehicle searched during vehicle profile search
+
 class Vehicle {
   
   final String licensePlate;

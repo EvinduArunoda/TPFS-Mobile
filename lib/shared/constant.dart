@@ -1,7 +1,9 @@
+//modal class storing styling of UI used by multiple views
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+//decorate text in UI
 const textInputDecoration = InputDecoration(
   labelStyle: TextStyle(
     color: Colors.black,
@@ -17,7 +19,7 @@ const textInputDecoration = InputDecoration(
   )
 );
 
-
+//decorate the procedure page with 4 grids
 Container buildGridView (String name , IconData icon,Function whenPressed, String gridData, String step,Key key ) {
     return Container(
       key: key,

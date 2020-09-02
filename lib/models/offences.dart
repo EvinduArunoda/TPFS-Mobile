@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+//Offences modal class used to store offences of matched criminal profiles during criminal assessment
 
 class CriminalOffences {
   String date;

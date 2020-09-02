@@ -5,12 +5,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:geolocator/geolocator.dart';
 import 'package:tpfs_policeman/models/user.dart';
 import 'package:tpfs_policeman/services/auth.dart';
-import 'package:tpfs_policeman/services/pushNotification.dart';
 import 'package:tpfs_policeman/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tpfs_policeman/services/navigation.dart';
 
+//first page run during app loading
 Future<Null> main() async {
   // Ensure that plugin services are initialized so that `availableCameras()`
   // can be called before `runApp()`

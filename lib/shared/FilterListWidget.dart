@@ -1,7 +1,7 @@
 import 'package:filter_list/src/choice_chip_widget.dart';
 import 'package:filter_list/src/search_field_widget.dart';
 import 'package:flutter/material.dart';
-
+//render filter widget to the screen 
 class FilterListWidget extends StatefulWidget {
   FilterListWidget({
     Key key,

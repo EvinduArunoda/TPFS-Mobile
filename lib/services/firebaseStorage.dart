@@ -10,7 +10,11 @@ Future<String> getDriverImage(String licenseNumber) async{
        .ref()    
        .child('Drivers/$licenseNumber.jpg');
   // print(storageReference);
-  String downloadAddress = await storageReference.getDownloadURL();
+  String downloadAddress = "https://miro.medium.com/max/790/1*reXbWdk_3cew69RuAUbVzg.png";
+  try {
+    downloadAddress = await storageReference.getDownloadURL();
+  }catch (e) {
+  }
   return downloadAddress;
 }
 

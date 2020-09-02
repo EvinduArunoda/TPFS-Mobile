@@ -39,7 +39,7 @@ class DriverCollection{
       date: document.data['Date'] ?? '',
       timestamp: document.data['Time'] ?? '',
       vehicle: document.data['Vehicle'] ?? '',
-      fineAmount: document.data['FineAmount'] ?? 0.0,
+      fineAmount: document.data['FineAmount'] + .0 ?? 0.0,
       status: document.data['Status'] ?? '', 
       offences: document.data['Offences'] ?? []
     );
